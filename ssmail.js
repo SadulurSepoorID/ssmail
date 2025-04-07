@@ -45,7 +45,7 @@ function toggleDarkMode() {
 }
 
 function goBack() {
-  window.location.href = "https://bit.ly/SadulursepoorID"; // ganti sesuai nama file tujuan lu
+  window.location.href = "https://sadulursepoorid.github.io/Sadulursepoorid"; // ganti sesuai nama file tujuan lu
 }
 
 function filterFiles() {
