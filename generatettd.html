@@ -76,12 +76,11 @@
       border-radius: 8px;
       word-wrap: break-word;
     }
-    #qrcode {
-      margin-top: 15px;
-      text-align: center;
-    }
-    #qrcode img {
-      cursor: pointer;
+    .qr-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
     }
     .screenshot-instruction {
       margin-top: 20px;
@@ -102,135 +101,150 @@
     <div class="header">
       <div class="header-title">Generate URL & QR Code Verifikasi</div>
     </div>
+
     <div class="form-group">
       <label for="nomor">Nomor Dokumen</label>
       <input type="text" id="nomor" placeholder="Contoh: 001/SS/IV/2025" required>
       <div class="error-message" id="error-nomor" style="display: none;">Nomor Dokumen harus diisi.</div>
     </div>
+
     <div class="form-group">
       <label for="tanggal">Tanggal Dokumen</label>
       <input type="text" id="tanggal" placeholder="Contoh: 17 April 2025" required>
       <div class="error-message" id="error-tanggal" style="display: none;">Tanggal Dokumen harus diisi.</div>
     </div>
+
     <div class="form-group">
       <label for="perihal">Perihal</label>
       <input type="text" id="perihal" placeholder="Contoh: Undangan" required>
       <div class="error-message" id="error-perihal" style="display: none;">Perihal harus diisi.</div>
     </div>
+
     <div class="form-group">
       <label for="pengirim">Pengirim</label>
       <input type="text" id="pengirim" placeholder="Contoh: Sekretariat SS" required>
       <div class="error-message" id="error-pengirim" style="display: none;">Pengirim harus diisi.</div>
     </div>
+
     <div class="form-group">
       <label for="penerima">Penerima</label>
       <input type="text" id="penerima" placeholder="Contoh: Anggota SS" required>
       <div class="error-message" id="error-penerima" style="display: none;">Penerima harus diisi.</div>
     </div>
+
     <div class="form-group">
-      <label for="ttd">Tanda Tangan</label>
-      <input type="text" id="ttd" placeholder="Contoh: Walid Ridho" required>
+      <label for="ttd">Tanda Tangan Orang Pertama</label>
+      <input type="text" id="ttd" placeholder="Contoh: M Walid Ridho" required>
       <div class="error-message" id="error-ttd" style="display: none;">Tanda Tangan harus diisi.</div>
     </div>
+
+    <div class="form-group">
+      <label for="ttd2">Tanda Tangan Orang Kedua</label>
+      <input type="text" id="ttd2" placeholder="Contoh: Ridho Ariotama" required>
+      <div class="error-message" id="error-ttd2" style="display: none;">Tanda Tangan harus diisi.</div>
+    </div>
+
     <div class="form-group">
       <button onclick="generateURL()">Generate URL</button>
     </div>
 
     <div class="output-container" id="output" style="display:none;">
-      <p><strong>URL Verifikasi:</strong></p>
-      <p id="generatedURL" style="color:#0056b3;"></p>
+      <p><strong>URL Verifikasi 1 (Ketua):</strong></p>
+      <p id="generatedURL1" style="color:#0056b3;"></p>
 
-      <!-- Tombol untuk generate QR code -->
+      <p><strong>URL Verifikasi 2 (Wakil Ketua):</strong></p>
+      <p id="generatedURL2" style="color:#0056b3;"></p>
+
       <div class="form-group">
         <button onclick="generateQRCode()">Generate QR Code</button>
       </div>
 
-      <div id="qrcode"></div>
+      <div class="qr-wrapper">
+        <div id="qrcode1"></div>
+        <div id="qrcode2"></div>
+      </div>
 
-      <!-- Instruksi Screenshot (disembunyikan awalnya) -->
       <div class="screenshot-instruction" id="screenshotInstruction" style="display:none;">
         <p>Silahkan screenshot bagian QR Code untuk di letakan ke dalam surat</p>
       </div>
     </div>
   </div>
 
-  <!-- Library QR Code Generator -->
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <script>
+    function generateURL() {
+      let isValid = true;
+      const fields = ['nomor', 'tanggal', 'perihal', 'pengirim', 'penerima', 'ttd', 'ttd2'];
 
-  <!-- Ganti bagian <script> dalam kode HTML lu dengan ini -->
-<script>
-  let qr; // global QRCode Object
-  
-  function generateURL() {
-    let isValid = true;
-    const fields = ['nomor', 'tanggal', 'perihal', 'pengirim', 'penerima', 'ttd'];
-
-    // Clear previous error styles and messages
-    fields.forEach(field => {
-      const input = document.getElementById(field);
-      const errorMessage = document.getElementById('error-' + field);
-      input.classList.remove('error');
-      errorMessage.style.display = "none";
-    });
-
-    // Validate form fields
-    fields.forEach(field => {
-      const input = document.getElementById(field);
-      const errorMessage = document.getElementById('error-' + field);
-      if (!input.value.trim()) {
-        isValid = false;
-        input.classList.add('error');
-        errorMessage.style.display = "block";
-      }
-    });
-
-    if (!isValid) return;
-
-    const baseURL = "https://sadulursepoorid.github.io/ssmail/verifikasi.html";
-    const params = new URLSearchParams({
-      nomor: document.getElementById("nomor").value.trim(),
-      tanggal: document.getElementById("tanggal").value.trim(),
-      perihal: document.getElementById("perihal").value.trim(),
-      pengirim: document.getElementById("pengirim").value.trim(),
-      penerima: document.getElementById("penerima").value.trim(),
-      ttd: document.getElementById("ttd").value.trim()
-    });
-
-    const fullURL = `${baseURL}?${params.toString()}`;
-
-    document.getElementById("generatedURL").textContent = fullURL;
-    document.getElementById("output").style.display = "block";
-  }
-
-  function generateQRCode() {
-    const fullURL = document.getElementById("generatedURL").textContent;
-
-    // clear QR code sebelumnya
-    const qrcodeContainer = document.getElementById("qrcode");
-    qrcodeContainer.innerHTML = "";
-
-    // generate QR code
-    new QRCode(qrcodeContainer, {
-      text: fullURL,
-      width: 200,
-      height: 200
-    });
-
-    // tampilkan instruksi screenshot
-    document.getElementById("screenshotInstruction").style.display = "block";
-  }
-
-  // Remove error styles saat user mulai mengetik
-  const inputs = document.querySelectorAll('input');
-  inputs.forEach(input => {
-    input.addEventListener('input', function () {
-      const errorMessage = document.getElementById('error-' + input.id);
-      if (input.value.trim()) {
+      fields.forEach(field => {
+        const input = document.getElementById(field);
+        const errorMessage = document.getElementById('error-' + field);
         input.classList.remove('error');
-        errorMessage.style.display = "none";
-      }
+        if (errorMessage) errorMessage.style.display = "none";
+      });
+
+      fields.forEach(field => {
+        const input = document.getElementById(field);
+        const errorMessage = document.getElementById('error-' + field);
+        if (!input.value.trim()) {
+          isValid = false;
+          input.classList.add('error');
+          if (errorMessage) errorMessage.style.display = "block";
+        }
+      });
+
+      if (!isValid) return;
+
+      const params = new URLSearchParams({
+        nomor: document.getElementById("nomor").value.trim(),
+        tanggal: document.getElementById("tanggal").value.trim(),
+        perihal: document.getElementById("perihal").value.trim(),
+        pengirim: document.getElementById("pengirim").value.trim(),
+        penerima: document.getElementById("penerima").value.trim()
+      });
+
+      const ttd1 = document.getElementById("ttd").value.trim();
+      const ttd2 = document.getElementById("ttd2").value.trim();
+
+      const url1 = `https://sadulursepoorid.github.io/ssmail/verifikasi.html?${params.toString()}&ttd=${encodeURIComponent(ttd1)}`;
+      const url2 = `https://sadulursepoorid.github.io/ssmail/verifikasi2.html?${params.toString()}&ttd=${encodeURIComponent(ttd2)}`;
+
+      document.getElementById("generatedURL1").textContent = url1;
+      document.getElementById("generatedURL2").textContent = url2;
+      document.getElementById("output").style.display = "block";
+    }
+
+    function generateQRCode() {
+      const url1 = document.getElementById("generatedURL1").textContent;
+      const url2 = document.getElementById("generatedURL2").textContent;
+
+      document.getElementById("qrcode1").innerHTML = "";
+      document.getElementById("qrcode2").innerHTML = "";
+
+      new QRCode(document.getElementById("qrcode1"), {
+        text: url1,
+        width: 200,
+        height: 200
+      });
+
+      new QRCode(document.getElementById("qrcode2"), {
+        text: url2,
+        width: 200,
+        height: 200
+      });
+
+      document.getElementById("screenshotInstruction").style.display = "block";
+    }
+
+    document.querySelectorAll('input').forEach(input => {
+      input.addEventListener('input', function () {
+        const errorMessage = document.getElementById('error-' + input.id);
+        if (input.value.trim() && errorMessage) {
+          input.classList.remove('error');
+          errorMessage.style.display = "none";
+        }
+      });
     });
-  });
-</script>
+  </script>
 </body>
 </html>
