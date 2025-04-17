@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Verifikasi Dokumen Elektronik</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f0f2f7;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 800px;
+      background: white;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      border-left: 5px solid #0056b3;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .header-title {
+      font-size: 26px;
+      font-weight: bold;
+      color: #0056b3;
+      text-transform: uppercase;
+    }
+    .info {
+      display: flex;
+      flex-direction: column;
+      padding: 12px 0;
+      border-bottom: 2px solid #ccc;
+      font-size: 18px;
+      color: #444;
+    }
+    .info span {
+      font-weight: bold;
+      color: #222;
+    }
+    .info span.value {
+      font-weight: normal;
+      color: #555;
+    }
+    .info:last-child {
+      border-bottom: none;
+    }
+    .signature-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 30px;
+      margin-top: 30px;
+    }
+    .signature, .footer {
+      flex: 1;
+      padding: 20px;
+      border: 2px dashed #555;
+      background: #f9f9f9;
+      border-radius: 10px;
+    }
+    .signature {
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+      color: #333;
+      text-align: left;
+    }
+    .signature img {
+      height: 90px;
+      margin-right: 20px;
+    }
+    .signature strong {
+      font-weight: bold;
+      color: #000;
+    }
+    .footer {
+      font-size: 16px;
+      color: #333;
+      text-align: left;
+    }
+    .footer strong {
+      font-weight: bold;
+      color: #000;
+    }
+    @media (max-width: 700px) {
+      .container {
+        padding: 30px;
+      }
+      .signature-footer {
+        flex-direction: column;
+      }
+      .signature {
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        text-align: left;
+      }
+      .signature img {
+        margin-right: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-title">Verifikasi Tanda Tangan Elektronik</div>
+    </div>
+    <div class="info"><span>Nomor Dokumen</span> <span class="value" id="nomor"></span></div>
+<div class="info"><span>Tanggal Dokumen</span> <span class="value" id="tanggal"></span></div>
+<div class="info"><span>Perihal</span> <span class="value" id="perihal"></span></div>
+<div class="info"><span>Pengirim</span> <span class="value" id="pengirim"></span></div>
+<div class="info"><span>Penerima</span> <span class="value" id="penerima"></span></div>
+
+<div class="signature-footer">
+  <div class="signature">
+    <img src="https://i.imgur.com/3SOjRm2.jpeg" alt="Logo SS">
+    <div class="signature-text">
+      Ditandatangani secara elektronik oleh:<br>
+      <strong id="ttd"></strong><br><br>
+      Wakil Ketua Umum<br>
+      <strong>KOMUNITAS SADULUR SEPOOR INDONESIA</strong>
+    </div>
+  </div>
+  <div class="footer">
+    Dokumen telah ditandatangani secara elektronik menggunakan website oleh:<br>
+    <strong id="ttdCopy"></strong><br><br>
+    Ketua Umum Sadulur Sepoor Indonesia<br>
+    pada <strong id="tanggalCopy"></strong>
+  </div>
+</div>
+
+<script>
+  const q = new URLSearchParams(window.location.search);
+
+  // ambil isi dari URL parameter
+  const nomor = q.get("nomor") || "-";
+  const tanggal = q.get("tanggal") || "-";
+  const perihal = q.get("perihal") || "-";
+  const pengirim = q.get("pengirim") || "-";
+  const penerima = q.get("penerima") || "-";
+  const ttd = q.get("ttd") || "-";
+
+  // tempelin ke elemen HTML
+  document.getElementById("nomor").textContent = nomor;
+  document.getElementById("tanggal").textContent = tanggal;
+  document.getElementById("perihal").textContent = perihal;
+  document.getElementById("pengirim").textContent = pengirim;
+  document.getElementById("penerima").textContent = penerima;
+  document.getElementById("ttd").textContent = ttd;
+  document.getElementById("ttdCopy").textContent = ttd;
+  document.getElementById("tanggalCopy").textContent = tanggal;
+</script>
+</body>
+</html>
