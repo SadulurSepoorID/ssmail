@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Generate URL & QR Code Verifikasi</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f0f2f7;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      margin: auto;
+      border-left: 5px solid #0056b3;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .header-title {
+      font-size: 24px;
+      font-weight: bold;
+      color: #0056b3;
+      text-transform: uppercase;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 6px;
+      color: #333;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 10px 1px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    .form-group button {
+      width: 100%;
+      padding: 12px;
+      background-color: #0056b3;
+      color: white;
+      border: none;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .form-group button:hover {
+      background-color: #004299;
+    }
+    .output-container {
+      margin-top: 25px;
+      padding: 15px;
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      word-wrap: break-word;
+    }
+    #qrcode {
+      margin-top: 15px;
+      text-align: center;
+    }
+    #qrcode canvas {
+      cursor: pointer;
+    }
+    @media (max-width: 600px) {
+      .header-title {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-title">Generate URL & QR Code Verifikasi</div>
+    </div>
+    <div class="form-group">
+      <label for="nomor">Nomor Dokumen</label>
+      <input type="text" id="nomor" placeholder="Contoh: 001/SS/IV/2025" required>
+    </div>
+    <div class="form-group">
+      <label for="tanggal">Tanggal Dokumen</label>
+      <input type="text" id="tanggal" placeholder="Contoh: 17 April 2025" required>
+    </div>
+    <div class="form-group">
+      <label for="perihal">Perihal</label>
+      <input type="text" id="perihal" placeholder="Contoh: Undangan" required>
+    </div>
+    <div class="form-group">
+      <label for="pengirim">Pengirim</label>
+      <input type="text" id="pengirim" placeholder="Contoh: Sekretariat SS" required>
+    </div>
+    <div class="form-group">
+      <label for="penerima">Penerima</label>
+      <input type="text" id="penerima" placeholder="Contoh: Anggota SS" required>
+    </div>
+    <div class="form-group">
+      <label for="ttd">Tanda Tangan</label>
+      <input type="text" id="ttd" placeholder="Contoh: Walid Ridho" required>
+    </div>
+    <div class="form-group">
+      <button onclick="generateURL()">Generate URL</button>
+    </div>
+
+    <div class="output-container" id="output" style="display:none;">
+      <p><strong>URL Verifikasi:</strong></p>
+      <p id="generatedURL" style="color:#0056b3;"></p>
+
+      <div class="form-group">
+        <button onclick="generateQRCode()">Generate QR Code</button>
+      </div>
+
+      <div class="form-group" id="downloadContainer" style="display:none;">
+        <button onclick="downloadQRCode()">Download QR Code</button>
+      </div>
+
+      <div id="qrcode"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <script>
+    function generateURL() {
+      const fields = ['nomor', 'tanggal', 'perihal', 'pengirim', 'penerima', 'ttd'];
+      for (let field of fields) {
+        const input = document.getElementById(field);
+        if (!input.value.trim()) {
+          alert('Semua kolom harus diisi!');
+          input.focus();
+          return;
+        }
+      }
+
+      const baseURL = "https://sadulursepoorid.github.io/ssmail/verifikasi.html";
+      const params = new URLSearchParams({
+        nomor: document.getElementById("nomor").value,
+        tanggal: document.getElementById("tanggal").value,
+        perihal: document.getElementById("perihal").value,
+        pengirim: document.getElementById("pengirim").value,
+        penerima: document.getElementById("penerima").value,
+        ttd: document.getElementById("ttd").value
+      });
+      const fullURL = `${baseURL}?${params.toString()}`;
+
+      document.getElementById("generatedURL").textContent = fullURL;
+      document.getElementById("output").style.display = "block";
+      document.getElementById("downloadContainer").style.display = "none";
+      document.getElementById("qrcode").innerHTML = "";
+    }
+
+    function generateQRCode() {
+      const fullURL = document.getElementById("generatedURL").textContent;
+      const qrcodeContainer = document.getElementById("qrcode");
+      qrcodeContainer.innerHTML = "";
+
+      new QRCode(qrcodeContainer, {
+        text: fullURL,
+        width: 200,
+        height: 200
+      });
+
+      document.getElementById("downloadContainer").style.display = "block";
+    }
+
+    function downloadQRCode() {
+      const canvas = document.querySelector("#qrcode canvas");
+      const link = document.createElement('a');
+      link.href = canvas.toDataURL("image/png");
+      link.download = 'qr_code.png';
+      link.click();
+    }
+  </script>
+</body>
+</html>
